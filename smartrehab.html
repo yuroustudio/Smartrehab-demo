@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartRehab 智慧預健</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+<style>
+/* Layout: 簡報封面延伸成長頁。大圓形色塊作背景裝飾，內容單欄靠左，章節以細線分隔。 */
+:root {
+  --bg: #FBF8F1;
+  --surface: #F3F2EE;
+  --navy: #1B2478;
+  --rust: #B5472A;
+  --yellow: #EBDC82;
+  --lav: #E8EAF6;
+  --fg: #2B2E4A;
+  --muted: #6A6C84;
+  --line: #E3DFD2;
+  --heat0: #EFEDE6;
+  --heat1: #F3E9A8;
+  --heat2: #EBDC82;
+  --heat3: #D9B24A;
+  --font-display: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14162B; --surface: #1C1F3A; --navy: #B7BEFA; --rust: #EE8A66; --yellow: #D9C960;
+    --lav: #232650; --fg: #E9E7F2; --muted: #A2A4C0; --line: #2C2F52;
+    --heat0: #232648; --heat1: #5A5A3E; --heat2: #8F8A47; --heat3: #D9C960;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14162B; --surface: #1C1F3A; --navy: #B7BEFA; --rust: #EE8A66; --yellow: #D9C960;
+  --lav: #232650; --fg: #E9E7F2; --muted: #A2A4C0; --line: #2C2F52;
+  --heat0: #232648; --heat1: #5A5A3E; --heat2: #8F8A47; --heat3: #D9C960;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body);
+  font-size: 16px; line-height: 1.75; padding-inline: 20px; overflow-x: hidden;
+}
+.wrap { max-width: 1040px; margin-inline: auto; position: relative; }
+h1, h2, h3 { font-family: var(--font-display); color: var(--navy); text-wrap: balance; margin: 0; line-height: 1.3; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--rust); outline-offset: 3px; }
+
+/* nav */
+nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); margin-inline: -20px; padding-inline: 20px; }
+nav .wrap { display: flex; gap: 20px; align-items: center; padding-block: 12px; overflow-x: auto; white-space: nowrap; }
+nav b { font-family: var(--font-display); color: var(--rust); letter-spacing: .08em; margin-right: auto; font-size: 15px; }
+nav a { text-decoration: none; font-size: 14px; color: var(--muted); }
+nav a:hover { color: var(--navy); }
+
+/* hero */
+.hero { position: relative; padding-block: 72px 80px; }
+.dot { position: absolute; border-radius: 50%; z-index: 0; pointer-events: none; }
+.dot.lav { width: 420px; height: 420px; background: var(--lav); top: -200px; right: -140px; }
+.dot.grey { width: 380px; height: 380px; background: var(--surface); bottom: -180px; left: -200px; }
+.dot.yellow { width: 76px; height: 76px; background: var(--yellow); bottom: 20px; right: 12%; }
+.hero .wrap > * { position: relative; z-index: 1; }
+.kicker { color: var(--rust); font-weight: 700; letter-spacing: .12em; font-size: 15px; }
+.hero h1 { font-size: clamp(34px, 6.4vw, 64px); font-weight: 900; margin-block: 20px 36px; letter-spacing: .02em; }
+.sub { color: var(--navy); font-family: var(--font-display); font-weight: 600; font-size: clamp(17px, 2.4vw, 22px); }
+.bar { width: 64px; height: 6px; background: var(--rust); margin-block: 14px 40px; }
+.hero .lead { max-width: 34em; color: var(--fg); margin-bottom: 36px; }
+.byline { color: var(--rust); font-weight: 700; letter-spacing: .06em; }
+
+/* sections */
+section { padding-block: 72px; border-top: 1px solid var(--line); }
+.eyebrow { color: var(--rust); font-weight: 700; letter-spacing: .12em; font-size: 14px; }
+h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 900; margin-block: 8px 20px; }
+h3 { font-size: 20px; font-weight: 600; }
+.intro { max-width: 40em; color: var(--muted); }
+.stack { display: grid; gap: 40px; margin-top: 40px; }
+.cols { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.cols > * { min-width: 0; }
+
+.pain { background: var(--lav); padding: 28px; border-radius: 4px; display: grid; gap: 10px; align-content: start; }
+.pain h3 { font-size: 18px; }
+.pain p { font-size: 15px; }
+
+/* compare table */
+.tablebox { overflow-x: auto; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 15px; }
+th, td { text-align: left; padding: 16px 18px; vertical-align: top; border-bottom: 1px solid var(--line); }
+th { font-family: var(--font-display); color: var(--navy); font-size: 16px; }
+th.us { color: var(--rust); }
+td:first-child { font-weight: 700; color: var(--navy); white-space: nowrap; }
+td.us { background: var(--lav); }
+
+.biz { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.biz > div { border-top: 3px solid var(--navy); padding-top: 14px; display: grid; gap: 6px; }
+.biz > div:nth-child(2) { border-color: var(--rust); }
+.biz > div:nth-child(3) { border-color: var(--yellow); }
+.biz small { color: var(--muted); font-size: 14px; }
+
+/* architecture */
+.arch { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0; border: 1px solid var(--line); }
+.arch > div { padding: 24px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.arch > div + div { border-left: 1px solid var(--line); }
+@media (max-width: 600px) { .arch > div + div { border-left: 0; border-top: 1px solid var(--line); } }
+.tag { font-size: 13px; letter-spacing: .1em; color: var(--rust); font-weight: 700; }
+.tech { font-family: var(--font-display); color: var(--navy); font-weight: 600; font-size: 18px; }
+
+/* modules */
+.module { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+@media (max-width: 760px) { .module { grid-template-columns: minmax(0, 1fr); } }
+.module + .module { margin-top: 64px; padding-top: 64px; border-top: 1px dashed var(--line); }
+.mname { color: var(--rust); font-weight: 700; letter-spacing: .08em; font-size: 14px; }
+.spec { display: grid; gap: 14px; margin-top: 18px; font-size: 15px; }
+.spec dt { font-weight: 700; color: var(--navy); font-size: 14px; letter-spacing: .06em; }
+.spec dd { margin: 2px 0 0; color: var(--fg); }
+.demo { background: var(--surface); padding: 24px; border-radius: 4px; min-width: 0; }
+.demo .cap { font-size: 13px; color: var(--muted); margin-top: 14px; }
+
+/* body map */
+.map { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 20px; align-items: center; }
+.map svg { width: 150px; height: auto; display: block; }
+.region { fill: var(--bg); stroke: var(--navy); stroke-width: 2; cursor: pointer; transition: fill .15s; }
+.region:hover { fill: var(--lav); }
+.region.on { fill: var(--rust); stroke: var(--rust); }
+.body-base { fill: none; stroke: var(--line); stroke-width: 2; }
+.field { display: grid; gap: 4px; }
+.field span { font-size: 13px; color: var(--muted); }
+.field output { font-family: var(--font-display); font-weight: 600; color: var(--navy); font-size: 22px; min-height: 1.4em; }
+.reminder { margin-top: 10px; background: var(--bg); border-left: 4px solid var(--yellow); padding: 10px 14px; font-size: 14px; }
+@media (max-width: 420px) { .map { grid-template-columns: minmax(0, 1fr); } }
+
+/* rest timer */
+.flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; }
+.flow span { background: var(--bg); border: 1px solid var(--line); padding: 4px 12px; border-radius: 99px; color: var(--navy); font-weight: 500; }
+.flow i { color: var(--muted); font-style: normal; }
+.timer { display: flex; align-items: center; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+.ring { position: relative; width: 120px; height: 120px; flex: none; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 10; }
+.ring .track { stroke: var(--line); }
+.ring .prog { stroke: var(--rust); stroke-linecap: round; transition: stroke-dashoffset .9s linear; }
+.ring b { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-display); font-size: 34px; color: var(--navy); font-variant-numeric: tabular-nums; }
+button { font: inherit; cursor: pointer; border: 0; background: var(--navy); color: var(--bg); padding: 10px 20px; border-radius: 2px; font-weight: 700; letter-spacing: .06em; }
+button:hover { background: var(--rust); color: #fff; }
+.tinfo { display: grid; gap: 6px; font-size: 14px; }
+.tinfo strong { color: var(--navy); font-size: 16px; }
+
+/* charts */
+.chart { width: 100%; height: auto; display: block; }
+.chart text { fill: var(--muted); font-size: 11px; font-family: var(--font-body); }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .ln { fill: none; stroke: var(--rust); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.chart .area { fill: var(--yellow); opacity: .35; }
+.chart .pt { fill: var(--rust); }
+.vas { margin-top: 18px; display: grid; gap: 6px; }
+.vas label { font-size: 14px; color: var(--navy); font-weight: 700; display: flex; justify-content: space-between; }
+.vas input { width: 100%; accent-color: var(--rust); }
+.heat { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 22px; }
+.heat i { aspect-ratio: 1; border-radius: 2px; background: var(--heat0); display: block; }
+.heat i.l1 { background: var(--heat1); } .heat i.l2 { background: var(--heat2); } .heat i.l3 { background: var(--heat3); }
+.legend { display: flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); margin-top: 10px; }
+.legend i { width: 14px; height: 14px; border-radius: 2px; display: block; }
+
+.loop { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 32px 8px; }
+.loop div { flex: 1 1 220px; min-width: 0; background: var(--lav); padding: 18px 20px; display: grid; gap: 4px; }
+.loop b { color: var(--navy); font-family: var(--font-display); }
+.loop small { color: var(--muted); font-size: 14px; }
+
+/* roadmap */
+.road { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.road > div { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.road .circ { width: 44px; height: 44px; border-radius: 50%; background: var(--yellow); margin-bottom: 6px; }
+.road > div:nth-child(2) .circ { background: var(--lav); }
+.road > div:nth-child(3) .circ { background: var(--rust); opacity: .85; }
+
+/* about */
+.abilities { display: grid; gap: 28px 40px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-top: 36px; }
+.abilities > div { display: grid; gap: 6px; border-top: 2px solid var(--navy); padding-top: 12px; min-width: 0; }
+.abilities > div:nth-child(even) { border-color: var(--rust); }
+
+footer { border-top: 1px solid var(--line); padding-block: 40px 56px; color: var(--muted); font-size: 14px; }
+footer b { color: var(--rust); letter-spacing: .08em; }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .ring .prog { transition: none; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <b>SMARTREHAB</b>
+    <a href="#why">背景</a>
+    <a href="#stack">架構</a>
+    <a href="#modules">三大模組</a>
+    <a href="#roadmap">藍圖</a>
+    <a href="#author">關於作者</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="dot lav"></div>
+  <div class="dot grey"></div>
+  <div class="dot yellow"></div>
+  <div class="wrap">
+    <p class="kicker">SMARTREHAB 智慧預健 · 個人專題</p>
+    <h1>讓復健，不只發生在診所裡。</h1>
+    <p class="sub">智慧預約 × 居家復健 × 復健追蹤</p>
+    <div class="bar"></div>
+    <p class="lead">一個免下載、免密碼的 Web App，可從 LINE 直接開啟。病患離開診所後仍有明確的居家指引，診所也看得到院外的復健數據。</p>
+    <p class="byline">主講人：陳諭柔</p>
+  </div>
+</header>
+
+<main>
+<section id="why">
+  <div class="wrap">
+    <p class="eyebrow">專案背景</p>
+    <h2>院內診察精準，院外追蹤斷線。</h2>
+    <p class="intro">病患在診所完成診斷與徒手治療，回家後卻缺少居家指引與運動追蹤，治療效果接不起來。SmartRehab 把院內與院外接成同一條照護線。</p>
+
+    <div class="stack">
+      <div class="cols">
+        <div class="pain">
+          <p class="mname">病患端</p>
+          <h3>臨床追蹤斷線，療程中途中斷</h3>
+          <p>離院後不知道怎麼做居家訓練，進入運動迷惘期。痛感減輕就以為痊癒，又看不見復健進度，最後在療程中期永久中斷。</p>
+        </div>
+        <div class="pain">
+          <p class="mname">診所端</p>
+          <h3>行政效率遇到瓶頸</h3>
+          <p>櫃檯同時要接待與接電話。預約與改約靠人工電話和紙本、試算表核對，提醒容易遺漏，也容易發生溝通爭議。</p>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:16px">傳統模式與 SmartRehab 的差別</h3>
+        <div class="tablebox">
+          <table>
+            <thead><tr><th></th><th>傳統診所營運模式</th><th class="us">SmartRehab 智慧預健</th></tr></thead>
+            <tbody>
+              <tr><td>預約與改約</td><td>單筆耗時 10 分鐘至 1 天，靠人工電話反覆確認時段。</td><td class="us">1 分鐘內自動完成，病患在線上自助預約與改約。</td></tr>
+              <tr><td>到診提醒</td><td>人工電話與紙本核對，提醒不穩定，容易引發到診爭議。</td><td class="us">系統自動發送到診提醒，溝通有軌跡，爭議消失。</td></tr>
+              <tr><td>人力配置</td><td>櫃檯被重複的改約與提醒工作綁住。</td><td class="us">免除人工提醒，櫃檯人力轉去服務現場病患。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:16px">雙向省時與商業模式</h3>
+        <div class="biz">
+          <div>
+            <b>病患端：極簡預約＋視覺導引</b>
+            <small>無縫完成預約，拿到標準化運動指引，使用門檻降到最低。</small>
+          </div>
+          <div>
+            <b>診所端：數據同步＋免人工提醒</b>
+            <small>即時掌握病患離院後的復健數據，同時釋放櫃檯行政壓力。</small>
+          </div>
+          <div>
+            <b>B2B2C 診所訂閱制</b>
+            <small>診所按月付費訂閱，病患完全免費。診所有明確的投資報酬，病患沒有採用門檻。</small>
+          </div>
+        </div>
+        <div class="cols" style="margin-top:28px">
+          <div><b style="color:var(--rust)">提升留存率</b><p style="font-size:15px;color:var(--muted)">讓病患持續看見進步，延長單一療程週期。</p></div>
+          <div><b style="color:var(--rust)">降低中斷率</b><p style="font-size:15px;color:var(--muted)">消除迷惘期與假性痊癒的誤判。</p></div>
+          <div><b style="color:var(--rust)">提高單日容載量</b><p style="font-size:15px;color:var(--muted)">改約溝通時間縮短 90% 以上。</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap">
+    <p class="eyebrow">系統架構與技術選型</p>
+    <h2>輕量、無縫，點開就能用。</h2>
+    <p class="intro">醫療科技產品初期，用戶獲取成本與部署效率決定成敗。系統採用免下載、免帳號密碼的 Web App 與 LINE 嵌入式瀏覽器，把使用摩擦降到零。</p>
+    <div class="arch" style="margin-top:36px">
+      <div>
+        <p class="tag">FRONTEND 前端介面</p>
+        <p class="tech">HTML5 / JS / SVG</p>
+        <p style="font-size:15px">跨平台相容。向量 SVG 可綁定 DOM 事件，用來渲染高解析度、可互動的人體圖譜。</p>
+      </div>
+      <div>
+        <p class="tag">BACKEND 後端 API</p>
+        <p class="tech">Google Apps Script RESTful API</p>
+        <p style="font-size:15px">Serverless 架構，以 JSON Payload 傳輸資料，不必架設伺服器，維運單純。</p>
+      </div>
+      <div>
+        <p class="tag">ARCHITECTURE 整合架構</p>
+        <p class="tech">Serverless 無伺服器</p>
+        <p style="font-size:15px">沒有伺服器維護負擔，可彈性擴充，前端與 API 之間即時、輕量地傳輸資料。</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:56px">AI 協作開發流程（5–6 週完成 MVP）</h3>
+    <div class="cols" style="margin-top:20px">
+      <div><b style="color:var(--rust)">需求分析</b><p style="font-size:15px;color:var(--muted)">訪談 2–3 位治療師或櫃檯人員、2–3 位中斷療程的病患，用親和圖歸納出「行政核對耗時」與「居家迷惘期」兩大斷點，並建立 Persona（上班族陳先生）。</p></div>
+      <div><b style="color:var(--rust)">流程設計</b><p style="font-size:15px;color:var(--muted)">比較原生 App 與 Web App / LINE 嵌入的轉換率，定案輕量 Web 體驗，畫出病患與診所的雙向流程。</p></div>
+      <div><b style="color:var(--rust)">功能規劃</b><p style="font-size:15px;color:var(--muted)">用艾森豪矩陣與 User Story Mapping 切出 MVP：智慧預約、居家復健、復健追蹤。</p></div>
+      <div><b style="color:var(--rust)">全端開發與除錯</b><p style="font-size:15px;color:var(--muted)">用 AI 撰寫 API 測試腳本，解決行動端 SVG 觸控偏位與 Promise 鏈式調用異常，並把 AI 當作隨時可問的 Code Reviewer。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="modules">
+  <div class="wrap">
+    <p class="eyebrow">MVP 核心功能</p>
+    <h2>三個模組，接成一個復健閉環。</h2>
+    <div class="loop">
+      <div><b>預約</b><small>鎖定病灶部位與看診時段</small></div>
+      <div><b>居家訓練</b><small>跟著導引完成每日處方</small></div>
+      <div><b>追蹤</b><small>回傳疼痛與遵從率，回診調整</small></div>
+    </div>
+
+    <!-- 模組一 -->
+    <div class="module" style="margin-top:56px">
+      <div>
+        <p class="mname">模組一 · SMART BOOKING &amp; VISUAL MAPPING</p>
+        <h3 style="font-size:26px;margin-top:6px">SVG 人體圖譜病灶匹配與自動化預約</h3>
+        <dl class="spec">
+          <div><dt>觸發情境</dt><dd>首次預約或日常改約時，從 LINE 官方帳號或 Web App 連結進入。</dd></div>
+          <div><dt>系統邏輯</dt><dd>SVG 各肌肉與關節區域綁定 click / touchstart。點擊後擷取 <code>data-region-id</code>，自動帶入表單，以 JSON 送到 GAS API 寫入資料庫。後端計時器在診期前 24 小時呼叫推播 API 發出提醒。</dd></div>
+          <div><dt>產出</dt><dd>病患點選區域即高亮並填入「主訴部位」，預約後收到提醒卡片。診所端行事曆即時更新名單與病灶部位。</dd></div>
+        </dl>
+      </div>
+      <div class="demo">
+        <div class="map">
+          <svg viewBox="0 0 150 300" role="group" aria-label="人體圖譜示範">
+            <g class="body-base">
+              <circle cx="75" cy="28" r="20"/>
+              <rect x="30" y="56" width="90" height="110" rx="22"/>
+              <rect x="42" y="170" width="28" height="110" rx="12"/>
+              <rect x="80" y="170" width="28" height="110" rx="12"/>
+            </g>
+            <circle class="region" data-region-id="neck" data-label="頸部" cx="75" cy="54" r="11" tabindex="0" role="button" aria-label="頸部"/>
+            <circle class="region" data-region-id="shoulder-l" data-label="左肩" cx="34" cy="74" r="14" tabindex="0" role="button" aria-label="左肩"/>
+            <circle class="region" data-region-id="shoulder-r" data-label="右肩" cx="116" cy="74" r="14" tabindex="0" role="button" aria-label="右肩"/>
+            <rect class="region" data-region-id="lower-back" data-label="下背" x="52" y="112" width="46" height="34" rx="12" tabindex="0" role="button" aria-label="下背"/>
+            <circle class="region" data-region-id="knee-l" data-label="左膝" cx="56" cy="212" r="14" tabindex="0" role="button" aria-label="左膝"/>
+            <circle class="region" data-region-id="knee-r" data-label="右膝" cx="94" cy="212" r="14" tabindex="0" role="button" aria-label="右膝"/>
+          </svg>
+          <div class="field">
+            <span>主訴部位（自動帶入）</span>
+            <output id="regionOut">請點選人體圖</output>
+            <span>region-id</span>
+            <output id="regionId" style="font-size:15px;font-family:var(--font-body)">—</output>
+          </div>
+        </div>
+        <div class="reminder">預約成功。系統會在看診前 24 小時發送到診提醒。</div>
+        <p class="cap">互動示範：點擊人體圖上的區域。</p>
+      </div>
+    </div>
+
+    <!-- 模組二 -->
+    <div class="module">
+      <div>
+        <p class="mname">模組二 · HOME REHABILITATION &amp; VISUAL GUIDANCE</p>
+        <h3 style="font-size:26px;margin-top:6px">視覺化居家運動導引與休息計時器</h3>
+        <dl class="spec">
+          <div><dt>觸發情境</dt><dd>病患在院外開啟系統，點擊「開始今天復健」。</dd></div>
+          <div><dt>系統邏輯</dt><dd>依病患 ID 讀取治療師開立的處方陣列（動作影片或圖示 URL、目標組數、每組次數、組間休息秒數），由狀態機控制流程。Rest Timer 歸零時觸發音效與視覺提示，完成後打包總執行時間與組數。</dd></div>
+          <div><dt>產出</dt><dd>清楚展示正確動作與注意事項，加上動態倒數休息計時，幫病患走出「不知道回家能做什麼運動」的迷惘期。</dd></div>
+        </dl>
+      </div>
+      <div class="demo">
+        <div class="flow"><span>準備中</span><i>→</i><span>動作執行</span><i>→</i><span>組間休息</span><i>→</i><span>下一組 / 完成</span></div>
+        <div class="timer">
+          <div class="ring">
+            <svg viewBox="0 0 120 120"><circle class="track" cx="60" cy="60" r="52"/><circle class="prog" id="prog" cx="60" cy="60" r="52"/></svg>
+            <b id="tnum">30</b>
+          </div>
+          <div class="tinfo">
+            <strong id="tstate">準備中</strong>
+            <span id="tset">第 1 組 / 共 3 組 · 每組 10 次</span>
+            <button id="tbtn" type="button">開始今天復健</button>
+          </div>
+        </div>
+        <p class="cap">互動示範：處方為 3 組、每組休息 30 秒（示範用，已縮短動作時間）。</p>
+      </div>
+    </div>
+
+    <!-- 模組三 -->
+    <div class="module">
+      <div>
+        <p class="mname">模組三 · CLINICAL TRACKING &amp; ANALYTICS</p>
+        <h3 style="font-size:26px;margin-top:6px">VAS 疼痛趨勢圖與遵從率熱力圖</h3>
+        <dl class="spec">
+          <div><dt>觸發情境</dt><dd>病患完成每日居家訓練後，自動跳出 VAS 疼痛評估；治療師開啟病患健康檔案時也會看到。</dd></div>
+          <div><dt>系統邏輯</dt><dd>病患滑動量表輸入 VAS（0 為無痛，10 為劇痛）。前端把「VAS 分數＋完成時間戳記＋運動完成率」傳到 GAS API 寫入雲端，再渲染 VAS 折線圖與近 30 天遵從率熱力圖。</dd></div>
+          <div><dt>產出</dt><dd>病患端與診所端看到同一份圖表，消除資訊不對稱，讓病患看見自己的進步，不因假性痊癒而中斷療程。</dd></div>
+        </dl>
+      </div>
+      <div class="demo">
+        <svg class="chart" id="vasChart" viewBox="0 0 320 170" role="img" aria-label="VAS 疼痛趨勢示範圖"></svg>
+        <div class="vas">
+          <label for="vasIn"><span>今天的疼痛指數</span><span id="vasVal">4</span></label>
+          <input id="vasIn" type="range" min="0" max="10" step="1" value="4">
+        </div>
+        <div class="heat" id="heat" aria-label="近 30 天遵從率熱力圖"></div>
+        <div class="legend"><span>近 30 天遵從率</span><i style="background:var(--heat0)"></i><span>未做</span><i style="background:var(--heat1)"></i><i style="background:var(--heat2)"></i><i style="background:var(--heat3)"></i><span>全做</span></div>
+        <p class="cap">示範資料，非真實病患紀錄。拖曳量表可改變最後一天的 VAS。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <p class="eyebrow">未來擴展藍圖</p>
+    <h2>從被動復健，走向主動日常預健。</h2>
+    <p class="intro">長期目標是把健康管理放進日常生活，把服務延伸到亞健康族群，做成高黏著度的個人化預防醫學生態系。</p>
+    <div class="road" style="margin-top:40px">
+      <div><div class="circ"></div><h3>日常預健花園</h3><p style="font-size:15px;color:var(--muted)">把每天完成的復健運動轉成花園植物的養分，用輕量互動降低養成習慣的心理負擔。</p></div>
+      <div><div class="circ"></div><h3>點數換禮獎勵</h3><p style="font-size:15px;color:var(--muted)">完成居家運動或健康打卡累積預健點數，可兌換診所自費項目折抵券或健康週邊商品。</p></div>
+      <div><div class="circ"></div><h3>居家復健挑戰賽</h3><p style="font-size:15px;color:var(--muted)">針對已康復或亞健康族群，推出主題式挑戰，例如「辦公室久坐肌群激活 14 天賽」。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="author">
+  <div class="wrap">
+    <p class="eyebrow">關於作者</p>
+    <h2>從需求研判到實機 MVP，一個人完成。</h2>
+    <p class="intro">作者陳諭柔在 5–6 週內獨力完成需求研判、系統架構設計與可現場操作的 MVP，結合四種能力。</p>
+    <div class="abilities">
+      <div><h3>臨床洞察力</h3><p style="font-size:15px;color:var(--muted)">以物理治療的實務經驗，抓到「病患離院後斷線」與「診所行政耗時」兩個真實痛點。</p></div>
+      <div><h3>完整 PM 產品思維</h3><p style="font-size:15px;color:var(--muted)">獨立完成訪談收斂、Persona、服務藍圖、Wireframe 與 MVP 範疇切分。</p></div>
+      <div><h3>AI 協作能力</h3><p style="font-size:15px;color:var(--muted)">用 Prompt Engineering 支援需求分析、User Story、概念視覺與程式撰寫。</p></div>
+      <div><h3>獨立全端開發力</h3><p style="font-size:15px;color:var(--muted)">整合 HTML5 / JS / SVG 前端與 Google Apps Script 後端，克服觸控偏位與 Promise 異步問題。</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>SMARTREHAB 智慧預健</b> · 個人專題 · 主講人 陳諭柔</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // 模組一：人體圖譜
+  var out = document.getElementById('regionOut');
+  var rid = document.getElementById('regionId');
+  var regions = document.querySelectorAll('.region');
+  function pick(el) {
+    regions.forEach(function (r) { r.classList.remove('on'); });
+    el.classList.add('on');
+    out.textContent = el.getAttribute('data-label');
+    rid.textContent = el.getAttribute('data-region-id');
+  }
+  regions.forEach(function (el) {
+    el.addEventListener('click', function () { pick(el); });
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(el); }
+    });
+  });
+
+  // 模組二：休息計時器（簡化狀態機）
+  var REST = 30, SETS = 3, DO_SECONDS = 4;
+  var C = 2 * Math.PI * 52;
+  var prog = document.getElementById('prog');
+  var tnum = document.getElementById('tnum');
+  var tstate = document.getElementById('tstate');
+  var tset = document.getElementById('tset');
+  var tbtn = document.getElementById('tbtn');
+  prog.style.strokeDasharray = C;
+  prog.style.strokeDashoffset = 0;
+  var timer = null, set = 1;
+  function setLabel() { tset.textContent = '第 ' + set + ' 組 / 共 ' + SETS + ' 組 · 每組 10 次'; }
+  function stop() { clearInterval(timer); timer = null; }
+  function countdown(total, onDone) {
+    var left = total;
+    tnum.textContent = left;
+    prog.style.strokeDashoffset = 0;
+    stop();
+    timer = setInterval(function () {
+      left -= 1;
+      tnum.textContent = Math.max(left, 0);
+      prog.style.strokeDashoffset = C * (1 - left / total);
+      if (left <= 0) { stop(); onDone(); }
+    }, 1000);
+  }
+  function doSet() {
+    tstate.textContent = '動作執行中';
+    setLabel();
+    tbtn.textContent = '重新開始';
+    countdown(DO_SECONDS, function () {
+      if (set >= SETS) { finish(); return; }
+      tstate.textContent = '組間休息';
+      countdown(REST, function () { set += 1; doSet(); });
+    });
+  }
+  function finish() {
+    tstate.textContent = '今天完成了，請回報疼痛指數';
+    tnum.textContent = '✓';
+    prog.style.strokeDashoffset = 0;
+    tbtn.textContent = '再練一次';
+  }
+  tbtn.addEventListener('click', function () { stop(); set = 1; doSet(); });
+
+  // 模組三：VAS 折線圖與熱力圖（示範資料）
+  var vas = [7, 7, 6, 6, 6, 5, 6, 5, 5, 4, 4, 5, 4, 3, 4, 3];
+  var input = document.getElementById('vasIn');
+  var val = document.getElementById('vasVal');
+  var svg = document.getElementById('vasChart');
+  var NS = 'http://www.w3.org/2000/svg';
+  var W = 320, H = 170, L = 28, R = 12, T = 12, B = 26;
+  function el(name, attrs, text) {
+    var n = document.createElementNS(NS, name);
+    Object.keys(attrs).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function draw() {
+    svg.innerHTML = '';
+    var n = vas.length;
+    var x = function (i) { return L + (W - L - R) * i / (n - 1); };
+    var y = function (v) { return T + (H - T - B) * (1 - v / 10); };
+    [0, 5, 10].forEach(function (t) {
+      svg.appendChild(el('line', { 'class': 'grid', x1: L, x2: W - R, y1: y(t), y2: y(t) }));
+      svg.appendChild(el('text', { x: L - 6, y: y(t) + 4, 'text-anchor': 'end' }, t));
+    });
+    var pts = vas.map(function (v, i) { return x(i) + ',' + y(v); });
+    svg.appendChild(el('polygon', { 'class': 'area', points: x(0) + ',' + y(0) + ' ' + pts.join(' ') + ' ' + x(n - 1) + ',' + y(0) }));
+    svg.appendChild(el('polyline', { 'class': 'ln', points: pts.join(' ') }));
+    svg.appendChild(el('circle', { 'class': 'pt', cx: x(n - 1), cy: y(vas[n - 1]), r: 5 }));
+    svg.appendChild(el('text', { x: x(0), y: H - 8, 'text-anchor': 'start' }, '第 1 天'));
+    svg.appendChild(el('text', { x: x(n - 1), y: H - 8, 'text-anchor': 'end' }, '今天'));
+  }
+  input.addEventListener('input', function () {
+    var v = +input.value;
+    val.textContent = v;
+    vas[vas.length - 1] = v;
+    draw();
+  });
+  vas[vas.length - 1] = +input.value;
+  draw();
+
+  var heat = document.getElementById('heat');
+  var levels = [3,3,2,3,0,3,3,2,1,3,3,0,2,3,3,3,2,0,3,3,1,3,3,3,2,3,0,3,3,3];
+  levels.forEach(function (l) {
+    var c = document.createElement('i');
+    if (l) c.className = 'l' + (l > 3 ? 3 : l);
+    heat.appendChild(c);
+  });
+})();
+</script>
+</body>
+</html>
